@@ -1,0 +1,39 @@
+version: "3.9"
+services:
+  pg_federator:
+    image: postgres:16
+    container_name: pg_federator
+    environment:
+      POSTGRES_PASSWORD: fedpass
+      POSTGRES_USER: feduser
+      POSTGRES_DB: globaldb
+    ports:
+      - "5433:5432"
+    volumes:
+      - ./init/federator:/docker-entrypoint-initdb.d
+
+  pg_source:
+    image: postgres:16
+    container_name: pg_source
+    environment:
+      POSTGRES_PASSWORD: srcpass
+      POSTGRES_USER: srcuser
+      POSTGRES_DB: ventas_pg
+    ports:
+      - "5434:5432"
+    volumes:
+      - ./init/pg:/docker-entrypoint-initdb.d
+
+  mysql_source:
+    image: mysql:8
+    container_name: mysql_source
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpass
+      MYSQL_DATABASE: ventas_mysql
+      MYSQL_USER: mysqluser
+      MYSQL_PASSWORD: mysqlpass
+    ports:
+      - "3307:3306"
+    volumes:
+      - ./init/mysql:/docker-entrypoint-initdb.d
+    command: --local-infile=1
